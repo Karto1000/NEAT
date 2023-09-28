@@ -77,9 +77,9 @@ while True:
         pygame.draw.line(
             SCREEN,
             (0, 0, 0) if connection.weight > 0 else (255, 0, 0),
-            (NN_W * (1 / layer_amount * from_layer) + 50, connection.from_node.y * 250 + 50),
-            (NN_W * (1 / layer_amount * to_layer) + 50, connection.to_node.y * 250 + 50),
-            max(1, int(abs(connection.weight * 2)))
+            (NN_W * (1 / layer_amount * from_layer) + 50, connection.from_node.y * 300 + 50),
+            (NN_W * (1 / layer_amount * to_layer) + 50, connection.to_node.y * 300 + 50),
+            max(1, int(abs(connection.weight * 4)))
         )
 
     current_layer = 0
@@ -92,7 +92,7 @@ while True:
         pygame.draw.circle(
             SCREEN,
             (0, 0, 0),
-            (NN_W * (1 / layer_amount * current_layer) + 50, node.y * 250 + 50),
+            (NN_W * (1 / layer_amount * current_layer) + 50, node.y * 300 + 50),
             10
         )
 

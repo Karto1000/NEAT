@@ -240,7 +240,7 @@ class NeuralNetwork:
         :return: The new weight of the connection
         """
 
-        connection.weight += min(2, max(-2, random.uniform(-0.5, 0.5)))
+        connection.weight += min(1, max(-1, random.uniform(-0.5, 0.5)))
         return connection.weight
 
     @staticmethod
@@ -252,5 +252,5 @@ class NeuralNetwork:
         :return: The new weight of the connection
         """
 
-        connection.weight = random.uniform(-2, 2)
+        connection.weight = random.uniform(-1, 1)
         return connection.weight
