@@ -63,8 +63,16 @@ class NeuralNetwork:
 
     def add_node_between(self, connection: Connection, x: float) -> tuple[Node, Connection, Connection]:
         amount_of_nodes_in_x = len(self.get_nodes_from_x(x))
-        new_node = Node(identification_number=self.neat.get_new_node_identification(), x=x, y=amount_of_nodes_in_x / 10,
-                        node_type=NodeType.HIDDEN)
+        existing_node = self.neat.get_node_from_xy(x, amount_of_nodes_in_x / 10)
+
+        id_num = existing_node.identification_number if existing_node else self.neat.get_new_node_identification()
+
+        new_node = Node(
+            identification_number=id_num,
+            x=x,
+            y=amount_of_nodes_in_x / 10,
+            node_type=NodeType.HIDDEN
+        )
 
         gene_connection_before = self.neat.get_connection_from_nodes(
             from_node=connection.from_node,

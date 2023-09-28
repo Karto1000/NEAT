@@ -21,6 +21,7 @@ class NEAT:
         self.connection_genes: dict[int, GeneConnection] = {}
         self.starting_structure = structure
         self.networks: list[NeuralNetwork] = []
+        self.generation: int = 1
         self.__number_of_networks = number_of_networks
         self.__number_of_x: list[float] = [0, 1]
 
@@ -70,6 +71,13 @@ class NEAT:
         self.node_genes[new_node_identification] = node
         return node
 
+    def get_node_from_xy(self, x: float, y: float) -> Optional[GeneNode]:
+        nodes_x = self.get_nodes_from_x(x)
+        for n in nodes_x:
+            if n.y == y:
+                return n
+        return None
+
     def get_connection(self, identification_number: int) -> Optional[GeneConnection]:
         if connection := self.connection_genes.get(identification_number):
             return connection
@@ -107,3 +115,8 @@ class NEAT:
 
     def get_layer_number(self, x: float) -> int:
         return self.__number_of_x.index(x)
+
+    def next_generation(self):
+        """
+        Finish the current generation and select and mutate the networks.
+        """

@@ -12,7 +12,9 @@ current_network = 0
 number_of_networks = 10
 
 neat = NEAT((3, 3), number_of_networks=number_of_networks)
-neat.networks[0].add_random_connection()
+conn1 = neat.networks[0].add_connection_between(neat.networks[0].nodes[0], neat.networks[0].nodes[3])
+conn2 = neat.networks[1].add_connection_between(neat.networks[1].nodes[0], neat.networks[1].nodes[3])
+
 
 while True:
     SCREEN.fill((255, 255, 255))
