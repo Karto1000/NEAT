@@ -8,10 +8,16 @@
 # email diginno@ypsomed.com
 # author: Tim Leuenberger (Tim.leuenberger@ypsomed.com)
 # -----------------------------------------------------------
+import math
 import random
+from typing import Optional
 
 from NEAT.Network.Connection import Connection
-from NEAT.Network.Node import Node
+from NEAT.Network.Node import Node, NodeType
+
+
+def sigmoid(x: float) -> float:
+    return 1 / (1 + 1 / math.exp(x))
 
 
 class NeuralNetwork:
@@ -19,8 +25,10 @@ class NeuralNetwork:
         self.nodes = []
         self.connections = []
         self.neat = neat
+        self.structure = structure
         self.__init_network__(structure)
         self.__number_of_x: list[float] = [0, 1]
+        self.fitness = 0
 
     def __init_network__(self, structure: tuple[int, int]):
         inn_number = 0
@@ -28,11 +36,11 @@ class NeuralNetwork:
         output_nodes = []
 
         for i in range(structure[0]):
-            input_nodes.append(Node(0, i / 10, identification_number=inn_number))
+            input_nodes.append(Node(0, i / 10, identification_number=inn_number, node_type=NodeType.INPUT))
             inn_number += 1
 
         for i in range(structure[1]):
-            output_nodes.append(Node(1, i / 10, identification_number=inn_number))
+            output_nodes.append(Node(1, i / 10, identification_number=inn_number, node_type=NodeType.OUTPUT))
             inn_number += 1
 
         self.nodes.extend(input_nodes)
@@ -55,7 +63,8 @@ class NeuralNetwork:
 
     def add_node_between(self, connection: Connection, x: float) -> tuple[Node, Connection, Connection]:
         amount_of_nodes_in_x = len(self.get_nodes_from_x(x))
-        new_node = Node(identification_number=self.neat.get_new_node_identification(), x=x, y=amount_of_nodes_in_x / 10)
+        new_node = Node(identification_number=self.neat.get_new_node_identification(), x=x, y=amount_of_nodes_in_x / 10,
+                        node_type=NodeType.HIDDEN)
 
         gene_connection_before = self.neat.get_connection_from_nodes(
             from_node=connection.from_node,
@@ -82,6 +91,8 @@ class NeuralNetwork:
         connection_after.weight = connection.weight
 
         self.connections.remove(connection)
+        connection.from_node.connections.remove(connection)
+
         self.connections.append(connection_before)
         self.connections.append(connection_after)
         self.nodes.append(new_node)
@@ -139,10 +150,10 @@ class NeuralNetwork:
             self.add_random_connection()
 
         connection = random.choice(self.connections)
-        x = (connection.from_node.x + connection.to_node.x) / 2 + 0.01
+        x = (connection.from_node.x + connection.to_node.x) / 2
         return self.add_node_between(connection, x)
 
-    def add_random_connection(self) -> Connection:
+    def add_random_connection(self) -> Optional[Connection]:
         """
         Add a connection between two random nodes
 
@@ -156,7 +167,7 @@ class NeuralNetwork:
 
         if len(nodes_with_greater_x) == 0:
             print("No nodes to connect")
-            return
+            return None
 
         second_node = random.choice(nodes_with_greater_x)
         return self.add_connection_between(first_node, second_node)
@@ -169,6 +180,36 @@ class NeuralNetwork:
 
     def get_layer_number(self, x: float) -> int:
         return self.__number_of_x.index(x)
+
+    def add_fitness(self, fitness: int):
+        self.fitness += fitness
+
+    def propagate(self, inputs: list[float]) -> list[float]:
+        if len(inputs) != self.structure[0]:
+            raise Exception(f"Expected {self.structure[0]} inputs but got {len(inputs)}")
+
+        # Set the values for the inputs
+        for i in range(0, self.structure[0]):
+            self.nodes[i].value = inputs[i]
+
+        for n in self.nodes:
+            if n.node_type != NodeType.INPUT:
+                n.value = sigmoid(n.value)
+
+            for c in n.connections:
+                c.to_node.value += n.value * c.weight
+
+        outputs = []
+        for i in range(len(self.nodes) - 1, len(self.nodes) - 1 - self.structure[1], -1):
+            outputs.append(self.nodes[i].value)
+
+        self.reset_node_values()
+
+        return outputs
+
+    def reset_node_values(self):
+        for n in self.nodes:
+            n.value = 0
 
     @staticmethod
     def toggle_connection(connection: Connection) -> bool:

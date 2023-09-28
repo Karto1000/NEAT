@@ -8,13 +8,22 @@
 # email diginno@ypsomed.com
 # author: Tim Leuenberger (Tim.leuenberger@ypsomed.com)
 # -----------------------------------------------------------
+from enum import Enum
+
 from NEAT.Network import Connection
 
 
+class NodeType(Enum):
+    INPUT = 1
+    HIDDEN = 2
+    OUTPUT = 3
+
+
 class Node:
-    def __init__(self, x: float, y: float, *, identification_number: int):
+    def __init__(self, x: float, y: float, *, node_type: NodeType, identification_number: int):
         self.identification_number = identification_number
-        self.value = None
+        self.node_type: NodeType = node_type
+        self.value = 0
         self.connections = []
         self.x = x
         self.y = y

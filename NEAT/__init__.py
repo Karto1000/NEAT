@@ -11,7 +11,7 @@
 from typing import Optional
 
 from NEAT.GeneConnection import GeneConnection
-from NEAT.GeneNode import GeneNode, NodeType
+from NEAT.GeneNode import GeneNode, GeneNodeType
 from NEAT.Network import NeuralNetwork, Node, Connection
 
 
@@ -34,7 +34,7 @@ class NEAT:
         for i in range(structure[0]):
             nodes[inn_number] = GeneNode(
                 identification_number=inn_number,
-                node_type=NodeType.INPUT,
+                node_type=GeneNodeType.INPUT,
                 x=0, y=i / 10
             )
             inn_number += 1
@@ -42,7 +42,7 @@ class NEAT:
         for i in range(structure[1]):
             nodes[inn_number] = GeneNode(
                 identification_number=inn_number,
-                node_type=NodeType.OUTPUT,
+                node_type=GeneNodeType.OUTPUT,
                 x=1, y=i / 10
             )
             inn_number += 1

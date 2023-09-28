@@ -11,16 +11,16 @@
 from enum import Enum
 
 
-class NodeType(Enum):
+class GeneNodeType(Enum):
     INPUT = 1
     HIDDEN = 2
     OUTPUT = 3
 
 
 class GeneNode:
-    def __init__(self, identification_number: int, *, x: float, y: float, node_type: NodeType = NodeType.HIDDEN):
+    def __init__(self, identification_number: int, *, x: float, y: float, node_type: GeneNodeType = GeneNodeType.HIDDEN):
         self.identification_number = identification_number
-        self.node_type: NodeType = node_type
+        self.node_type: GeneNodeType = node_type
         self.x, self.y = x, y
 
     def __repr__(self):

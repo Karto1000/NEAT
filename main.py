@@ -3,15 +3,16 @@ import pygame
 from NEAT import NEAT
 
 pygame.init()
-SW, SH = 800, 800
+SW, SH = 1200, 1000
 SCREEN = pygame.display.set_mode((SW, SH))
-NN_W, NN_H = SW - 50, 200
+NN_W, NN_H = 500, 200
 FONT = pygame.font.SysFont("Arial", 20)
 
 current_network = 0
-number_of_networks = 5
+number_of_networks = 10
 
 neat = NEAT((3, 3), number_of_networks=number_of_networks)
+neat.networks[0].add_random_connection()
 
 while True:
     SCREEN.fill((255, 255, 255))
@@ -32,9 +33,11 @@ while True:
                 else:
                     current_network -= 1
             if e.key == pygame.K_SPACE:
-                neat.networks[0].add_random_node()
+                neat.networks[current_network].add_random_node()
             if e.key == pygame.K_c:
-                neat.networks[0].add_random_connection()
+                neat.networks[current_network].add_random_connection()
+            if e.key == pygame.K_p:
+                print(neat.networks[current_network].propagate([1, 2, 3]))
 
     layer_amount = neat.get_layer_amount()
 
